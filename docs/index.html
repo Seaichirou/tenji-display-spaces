@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>仮名漢字による点字の展示</title>
+<link rel="stylesheet" href="style.css">
+<body>
+<header>
+  <div class="header-inner">
+    <h1>仮名漢字による点字の展示</h1>
+    <div class="controls">
+      <a href="https://github.com/Seaichirou/tenji-display-spaces" target="_blank" rel="noopener">
+        <button>GitHub リポジトリ</button>
+      </a>
+      <a href="../README.md" target="_blank" rel="noopener">
+        <button>README を見る</button>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="list" class="grid"></div>
+</main>
+
+<footer class="footer">
+  © 展示リポジトリ / CC BY-NC 4.0
+</footer>
+
+<script>
+(async () => {
+  const res = await fetch('manifest.json');
+  const data = await res.json();
+  const list = document.getElementById('list');
+
+  data.exhibits.forEach(ex => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <h2 style="margin:0 0 8px 0;font-size:18px;">${ex.label}</h2>
+      <div class="chips">
+        ${Object.entries(ex.files).map(([label, file]) => {
+          const url = `viewer.html?id=${encodeURIComponent(ex.id)}&type=${encodeURIComponent(label)}`;
+          return `<a class="chip" href="${url}">${label} を開く</a>`;
+        }).join('')}
+      </div>
+    `;
+    list.appendChild(card);
+  });
+})();
+</script>
+</body>
+</html>
