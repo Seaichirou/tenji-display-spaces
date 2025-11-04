@@ -45,21 +45,21 @@ const type = qs.get('type'); // "墨字" / "6点式点字" / "8点式点字" / "
 // タイプ別ポリシー（40文字行を守る：墨字/点字は改行のみ、備考は折り返し）
 const POLICY = {
   "墨字": {
-    whiteSpace: "pre", // 改行のみ有効（途中折返し禁止）
-    font: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace',
+    whiteSpace: "pre-wrap",
+    font: '',
     min: 16, max: 21, initial: 21,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "6点式点字": {
     whiteSpace: "pre",
     font: '"Apple Braille","Noto Sans Symbols2","Segoe UI Symbol", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-    min: 20, max: 32, initial: 30,
+    min: 20, max: 34, initial: 30,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "8点式点字": {
     whiteSpace: "pre",
     font: '"Apple Braille","Noto Sans Symbols2","Segoe UI Symbol", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-    min: 20, max: 32, initial: 30,
+    min: 20, max: 34, initial: 30,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "備考": {
