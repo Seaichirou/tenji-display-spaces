@@ -42,35 +42,31 @@ const qs = new URLSearchParams(location.search);
 const id   = qs.get('id');
 const type = qs.get('type'); // "墨字" / "6点式点字" / "8点式点字" / "備考"
 
-// タイプ別の表示ポリシー（40文字行を崩さない最大値を設定）
+// タイプ別ポリシー（40文字行を守る：墨字/点字は改行のみ、備考は折り返し）
 const POLICY = {
   "墨字": {
-    whiteSpace: "pre",                // 改行のみ有効（途中折返し禁止）
+    whiteSpace: "pre", // 改行のみ有効（途中折返し禁止）
     font: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace',
-    min: 16, max: 22, initial: 20,    // ← 最大を抑えて早折り/はみ出しを防ぐ
-    lineHeight: 2.0,
-    letterSpacing: "0", wordSpacing: "0"
+    min: 16, max: 21, initial: 21,
+    lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "6点式点字": {
     whiteSpace: "pre",
     font: '"Apple Braille","Noto Sans Symbols2","Segoe UI Symbol", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-    min: 20, max: 28, initial: 26,    // ← 現状“40セル収まる”のに合わせて広め
-    lineHeight: 2.0,
-    letterSpacing: "0", wordSpacing: "0"  // ※視認性で足したい場合は 0.02em/0.15em へ
+    min: 20, max: 32, initial: 30,
+    lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "8点式点字": {
     whiteSpace: "pre",
     font: '"Apple Braille","Noto Sans Symbols2","Segoe UI Symbol", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-    min: 20, max: 28, initial: 26,
-    lineHeight: 2.0,
-    letterSpacing: "0", wordSpacing: "0"
+    min: 20, max: 32, initial: 30,
+    lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "備考": {
-    whiteSpace: "pre-wrap",           // 備考は通常の折返し
-    font: '',                         // 既定フォント
-    min: 16, max: 24, initial: 18,
-    lineHeight: 2.0,
-    letterSpacing: "0", wordSpacing: "0"
+    whiteSpace: "pre-wrap", // 備考は通常の折返し
+    font: '',               // 既定フォント
+    min: 16, max: 21, initial: 21,
+    lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   }
 };
 
@@ -94,12 +90,12 @@ async function load() {
   title.textContent = `${ex.label} – ${type}`;
   meta.textContent  = path.replace('./','/');
 
-  // 本文 読み込み（日本語パス + キャッシュ回避）
+  // 本文（日本語パス + キャッシュ回避）
   const url = encodeURI(path) + '?v=' + Date.now();
   const txt = await fetch(url, { cache: 'no-cache' }).then(r => r.text());
   pre.textContent = txt;
 
-  // タイプ別の見た目適用
+  // タイプ別適用
   const p = POLICY[type] || POLICY["墨字"];
   pre.style.whiteSpace   = p.whiteSpace;
   pre.style.fontFamily   = p.font;
@@ -107,16 +103,18 @@ async function load() {
   pre.style.letterSpacing= p.letterSpacing;
   pre.style.wordSpacing  = p.wordSpacing;
 
-  // 欧文側のカーニング等で幅がズレないように明示的に抑制
+  // 点字/墨字はみ出し時の横スクロール（改行厳守）
+  pre.style.overflowX = (type === '備考') ? 'visible' : 'auto';
+
+  // 幅ブレ抑制
   pre.style.fontKerning  = 'none';
   pre.style.fontVariantEastAsian = 'normal';
 
-  // スライダ設定（タイプ別の最大/初期）
+  // スライダ設定（タイプ別レンジ）
   size.min = String(p.min);
   size.max = String(p.max);
   size.value = String(p.initial);
   applySize();
-
   size.addEventListener('input', applySize);
 
   function applySize() {
@@ -124,8 +122,8 @@ async function load() {
     sizeLabel.textContent = size.value + 'px';
   }
 }
-
 load();
 </script>
+
 </body>
 </html>
