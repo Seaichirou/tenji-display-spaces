@@ -19,15 +19,16 @@
 <main>
   <div class="card">
     <div id="meta" class="viewer-meta"></div>
-    <div class="controls" style="margin: 8px 0 12px 0;">
+    <div class="controls" style="margin:8px 0 12px 0;">
       <div class="range">
         <label for="size">文字サイズ</label>
         <input id="size" type="range" min="18" max="30" value="22">
       </div>
-      <label><input id="mono" type="checkbox"> 等幅フォント</label>
-      <label><input id="nowrap" type="checkbox"> 折り返さない（横スクロール）</label>
+      <!-- 👇 不要と言われた2つのボタンは削除しました -->
     </div>
-    <div class="viewer"><pre id="content">読み込み中…</pre></div>
+    <div class="viewer">
+      <pre id="content">読み込み中…</pre>
+    </div>
   </div>
 </main>
 
@@ -35,15 +36,18 @@
 
 <script>
 const qs = new URLSearchParams(location.search);
-const id = qs.get('id'); const type = qs.get('type');
+const id = qs.get('id');
+const type = qs.get('type'); // "墨字" / "6点式点字" / "8点式点字" / "備考"
 
 async function load() {
-  const res = await fetch('manifest.json');
+  // manifest 読み込み（キャッシュ回避）
+  const res = await fetch('manifest.json?v=' + Date.now(), { cache: 'no-cache' });
   const data = await res.json();
+
   const ex = data.exhibits.find(e => e.id === id);
   const title = document.getElementById('title');
-  const meta = document.getElementById('meta');
-  const pre  = document.getElementById('content');
+  const meta  = document.getElementById('meta');
+  const pre   = document.getElementById('content');
 
   if (!ex) { pre.textContent = '作品が見つかりません。'; return; }
   const file = ex.files[type];
@@ -51,27 +55,45 @@ async function load() {
 
   const path = ex.base + file;
   title.textContent = `${ex.label} – ${type}`;
-  meta.textContent = path.replace('../','/');
+  meta.textContent = path.replace('./','/');
 
-  const txt = await fetch(path).then(r => r.text());
+  // 実ファイル読込（日本語パス + キャッシュ回避）
+  const url = encodeURI(path) + '?v=' + Date.now();
+  const txt = await fetch(url, { cache: 'no-cache' }).then(r => r.text());
   pre.textContent = txt;
 
-  const size = document.getElementById('size');
-  const mono = document.getElementById('mono');
-  const nowrap = document.getElementById('nowrap');
-
-  function apply() {
-    pre.style.fontSize = size.value + 'px';
+  // 表示ポリシー：
+  // - 墨字／点字：改行のみで折り返し（white-space: pre）
+  //   → 40文字行を崩さない。横スクロールは必要に応じて。
+  // - 備考：通常の折り返し（white-space: pre-wrap）
+  if (type === '備考') {
+    pre.style.whiteSpace = 'pre-wrap';
+    pre.style.fontFamily = ''; // 既定の本文フォント
     pre.style.lineHeight = '2.0';
-    pre.style.fontFamily = mono.checked
-      ? 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono", monospace'
-      : '';
-    pre.style.whiteSpace = nowrap.checked ? 'pre' : 'pre-wrap';
+  } else {
+    pre.style.whiteSpace = 'pre'; // 改行のみ有効、途中折返し禁止
+    // 等幅フォントで40文字の“見た目”の安定性を確保（墨字）
+    // 点字は Apple Braille 等を優先しつつ、無ければ等幅系にフォールバック
+    if (type === '墨字') {
+      pre.style.fontFamily =
+        'ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace';
+    } else {
+      pre.style.fontFamily =
+        '"Apple Braille","Noto Sans Symbols2","Segoe UI Symbol", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+      // 点字の視認性を少し補強（お好みで調整可）
+      pre.style.letterSpacing = '0.02em';
+      pre.style.wordSpacing   = '0.15em';
+    }
+    pre.style.lineHeight = '2.0';
   }
-  size.addEventListener('input', apply);
-  mono.addEventListener('change', apply);
-  nowrap.addEventListener('change', apply);
-  apply();
+
+  // 文字サイズスライダ（※折返しは上の white-space 設定で固定）
+  const size = document.getElementById('size');
+  function applySize() {
+    pre.style.fontSize = size.value + 'px';
+  }
+  size.addEventListener('input', applySize);
+  applySize();
 }
 load();
 </script>
