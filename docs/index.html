@@ -5,47 +5,67 @@
 <title>仮名漢字による点字の展示</title>
 <link rel="stylesheet" href="style.css">
 <body>
+
 <header>
   <div class="header-inner">
     <h1>仮名漢字による点字の展示</h1>
-    <div class="controls">
-      <a href="https://github.com/Seaichirou/tenji-display-spaces" target="_blank" rel="noopener">
-        <button>GitHub リポジトリ</button>
-      </a>
-      <a href="../README.md" target="_blank" rel="noopener">
-        <button>README を見る</button>
-      </a>
+    <div class="controls" style="display:flex; gap:8px; flex-wrap:wrap; margin-left:auto;">
+      <a class="btn warm" href="https://tenji-convert-machine-8fbe49b32604.herokuapp.com/" target="_blank" rel="noopener">変換サイトへ戻る</a>
+      <a class="btn" href="https://github.com/Seaichirou/tenji-display-spaces/blob/main/README.md" target="_blank" rel="noopener">README を見る</a>
+      <a class="btn" href="https://github.com/Seaichirou/tenji-display-spaces" target="_blank" rel="noopener">GitHub リポジトリ</a>
     </div>
   </div>
 </header>
 
 <main>
-  <div id="list" class="grid"></div>
+  <div class="section card">
+    <div class="note">作品を横並びのグリッドで表示します。存在しない形式は “—” と表示します。</div>
+    <div class="table" id="table">
+      <div class="row head">
+        <div class="cell">作品名</div>
+        <div class="cell">墨字</div>
+        <div class="cell">6点式点字</div>
+        <div class="cell">8点式点字</div>
+        <div class="cell">備考</div>
+      </div>
+      <!-- rows are injected by JS -->
+    </div>
+  </div>
 </main>
 
-<footer class="footer">
-  © 展示リポジトリ / CC BY-NC 4.0
-</footer>
+<footer class="footer">© tenji-display-spaces / CC BY-NC 4.0</footer>
 
 <script>
+const COLUMNS = ["墨字","6点式点字","8点式点字","備考"]; // 表示順を固定
 (async () => {
   const res = await fetch('manifest.json');
   const data = await res.json();
-  const list = document.getElementById('list');
+  const table = document.getElementById('table');
 
   data.exhibits.forEach(ex => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <h2 style="margin:0 0 8px 0;font-size:18px;">${ex.label}</h2>
-      <div class="chips">
-        ${Object.entries(ex.files).map(([label, file]) => {
-          const url = `viewer.html?id=${encodeURIComponent(ex.id)}&type=${encodeURIComponent(label)}`;
-          return `<a class="chip" href="${url}">${label} を開く</a>`;
-        }).join('')}
-      </div>
-    `;
-    list.appendChild(card);
+    const row = document.createElement('div');
+    row.className = 'row';
+
+    // 作品名（viewer ではなく index から直接 viewer に飛ぶのではなく、各セルで個別に）
+    const labelCell = document.createElement('div');
+    labelCell.className = 'cell label';
+    labelCell.innerHTML = `<strong>${ex.label}</strong>`;
+    row.appendChild(labelCell);
+
+    // 4セル（墨字 / 6点 / 8点 / 備考）
+    COLUMNS.forEach(col => {
+      const cell = document.createElement('div'); cell.className = 'cell';
+      const has = ex.files && Object.prototype.hasOwnProperty.call(ex.files, col);
+      if (has) {
+        const url = `viewer.html?id=${encodeURIComponent(ex.id)}&type=${encodeURIComponent(col)}`;
+        cell.innerHTML = `<a class="chip" href="${url}">${col}</a>`;
+      } else {
+        cell.innerHTML = `<span class="chip disabled">—</span>`;
+      }
+      row.appendChild(cell);
+    });
+
+    table.appendChild(row);
   });
 })();
 </script>

@@ -5,55 +5,67 @@
 <title>展示ビューア</title>
 <link rel="stylesheet" href="style.css">
 <body>
+
 <header>
   <div class="header-inner">
     <h1 id="title">展示ビューア</h1>
-    <div class="controls">
-      <label>文字サイズ <input id="size" type="range" min="14" max="28" value="18"></label>
-      <label><input id="mono" type="checkbox"> 等幅フォント</label>
-      <label><input id="nowrap" type="checkbox"> 折り返さない（横スクロール）</label>
-      <a href="index.html"><button>一覧へ戻る</button></a>
+    <div class="controls" style="margin-left:auto;">
+      <a class="btn" href="index.html">展示一覧へ戻る</a>
+      <a class="btn warm" href="https://tenji-convert-machine-8fbe49b32604.herokuapp.com/" target="_blank" rel="noopener">変換サイトへ戻る</a>
     </div>
   </div>
 </header>
 
 <main>
   <div class="card">
-    <div id="meta" style="margin-bottom:8px;color:#6b7280;font-size:13px;"></div>
+    <div id="meta" class="viewer-meta"></div>
+    <div class="controls" style="margin: 8px 0 12px 0;">
+      <div class="range">
+        <label for="size">文字サイズ</label>
+        <input id="size" type="range" min="18" max="30" value="22">
+      </div>
+      <label><input id="mono" type="checkbox"> 等幅フォント</label>
+      <label><input id="nowrap" type="checkbox"> 折り返さない（横スクロール）</label>
+    </div>
     <div class="viewer"><pre id="content">読み込み中…</pre></div>
   </div>
 </main>
 
-<footer class="footer">© 展示リポジトリ / CC BY-NC 4.0</footer>
+<footer class="footer">© tenji-display-spaces / CC BY-NC 4.0</footer>
 
 <script>
 const qs = new URLSearchParams(location.search);
-const id = qs.get('id');
-const type = qs.get('type');
+const id = qs.get('id'); const type = qs.get('type');
 
 async function load() {
   const res = await fetch('manifest.json');
   const data = await res.json();
   const ex = data.exhibits.find(e => e.id === id);
-  if (!ex) { document.getElementById('content').textContent = '作品が見つかりません'; return; }
+  const title = document.getElementById('title');
+  const meta = document.getElementById('meta');
+  const pre  = document.getElementById('content');
 
-  const path = ex.base + ex.files[type];
-  document.getElementById('title').textContent = ex.label + ' - ' + type;
-  document.getElementById('meta').textContent = path.replace('../','/');
+  if (!ex) { pre.textContent = '作品が見つかりません。'; return; }
+  const file = ex.files[type];
+  if (!file) { pre.textContent = `${type} は用意されていません。`; return; }
+
+  const path = ex.base + file;
+  title.textContent = `${ex.label} – ${type}`;
+  meta.textContent = path.replace('../','/');
 
   const txt = await fetch(path).then(r => r.text());
-  const pre = document.getElementById('content');
   pre.textContent = txt;
 
-  // UI controls
   const size = document.getElementById('size');
   const mono = document.getElementById('mono');
   const nowrap = document.getElementById('nowrap');
 
   function apply() {
     pre.style.fontSize = size.value + 'px';
-    pre.style.lineHeight = '1.9';
-    pre.style.fontFamily = mono.checked ? 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Noto Sans Mono", monospace' : '';
+    pre.style.lineHeight = '2.0';
+    pre.style.fontFamily = mono.checked
+      ? 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono", monospace'
+      : '';
     pre.style.whiteSpace = nowrap.checked ? 'pre' : 'pre-wrap';
   }
   size.addEventListener('input', apply);
@@ -61,7 +73,6 @@ async function load() {
   nowrap.addEventListener('change', apply);
   apply();
 }
-
 load();
 </script>
 </body>
