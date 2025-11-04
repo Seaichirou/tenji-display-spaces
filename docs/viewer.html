@@ -42,12 +42,12 @@ const qs = new URLSearchParams(location.search);
 const id   = qs.get('id');
 const type = qs.get('type'); // "墨字" / "6点式点字" / "8点式点字" / "備考"
 
-// タイプ別ポリシー（40文字行を守る：墨字/点字は改行のみ、備考は折り返し）
+// タイプ別ポリシー（40文字行を守る：改行のみ(pre)、折り返し(pre-wrap)）
 const POLICY = {
   "墨字": {
     whiteSpace: "pre-wrap",
-    font: '',
-    min: 16, max: 20, initial: 20,
+    font: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace',
+    min: 16, max: 20.5, initial: 20.5,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "6点式点字": {
@@ -65,7 +65,7 @@ const POLICY = {
   "備考": {
     whiteSpace: "pre-wrap", // 備考は通常の折返し
     font: '',               // 既定フォント
-    min: 16, max: 20, initial: 20,
+    min: 16, max: 20.5, initial: 20.5,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   }
 };
