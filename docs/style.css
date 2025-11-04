@@ -47,15 +47,28 @@ h2 { margin: 0 0 8px 0; font-size: 18px; }
 .row.head { background: var(--hl); font-weight:600; }
 .row:last-child { border-bottom: none; }
 
-/* 5 columns on desktop, stacked on mobile */
+/* 行の余白を少し詰める */
+.row { gap: 6px; padding: 10px; }
+
+/* デスクトップ時は「タイトル=可変」「右4列=実寸」に */
 @media (min-width: 768px) {
-  .row { grid-template-columns: 1.8fr 1fr 1fr 1fr 1fr; }
+  .row { 
+    grid-template-columns: 1fr repeat(4, max-content);
+  }
+  /* 右側のセルは中央寄せでコンパクトに */
+  .row .cell:not(.label) { justify-self: center; }
 }
-@media (max-width: 767px) {
-  .row { grid-template-columns: 1fr; }
-  .row.head { display:none; }
-  .cell.label { font-weight:700; padding-bottom:6px; }
+
+/* チップを少し小さくして詰める */
+.chip { 
+  min-height: 30px; 
+  padding: 4px 10px; 
+  font-size: 14px; 
 }
+
+/* タイトルは2行折り返し前提で読みやすく */
+.cell.label { line-height: 1.6; }
+
 
 .chips { display:flex; gap:8px; flex-wrap:wrap; }
 .chip { display:inline-flex; align-items:center; justify-content:center; min-height:36px; padding:6px 10px;
