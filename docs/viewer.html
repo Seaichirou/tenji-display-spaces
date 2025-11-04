@@ -36,36 +36,40 @@
 </main>
 
 <footer class="footer">© tenji-display-spaces / CC BY-NC 4.0</footer>
-
 <script>
 const qs = new URLSearchParams(location.search);
 const id   = qs.get('id');
 const type = qs.get('type'); // "墨字" / "6点式点字" / "8点式点字" / "備考"
 
-// タイプ別ポリシー（40文字行を守る：改行のみ(pre)、折り返し(pre-wrap)）
+/* 本家アプリと同じ方針：
+   - 墨字/点字：pre-wrap（改行は尊重しつつ折り返す）
+   - 長い連続文字も折り返せるよう overflow-wrap:anywhere（＋保険 line-break:anywhere）
+   - 備考も同じく pre-wrap（読みやすさ優先）
+   - フォントサイズ上限はタイプ別（墨字=20.5px, 点字=30px）
+*/
 const POLICY = {
   "墨字": {
     whiteSpace: "pre-wrap",
     font: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace',
-    min: 16, max: 20.5, initial: 20.5,
+    min: 16, max: 20.5, initial: 20.5, step: 0.5,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "6点式点字": {
     whiteSpace: "pre-wrap",
     font: '"Apple Braille","Noto Sans Symbols2","Segoe UI Symbol", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-    min: 20, max: 30, initial: 30,
+    min: 20, max: 30, initial: 30, step: 1,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "8点式点字": {
     whiteSpace: "pre-wrap",
     font: '"Apple Braille","Noto Sans Symbols2","Segoe UI Symbol", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-    min: 20, max: 30, initial: 30,
+    min: 20, max: 30, initial: 30, step: 1,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
   "備考": {
-    whiteSpace: "pre-wrap", // 備考は通常の折返し
-    font: '',               // 既定フォント
-    min: 16, max: 20.5, initial: 20.5,
+    whiteSpace: "pre-wrap",
+    font: '',  // 既定フォント
+    min: 16, max: 20.5, initial: 20.5, step: 0.5,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   }
 };
@@ -97,23 +101,29 @@ async function load() {
 
   // タイプ別適用
   const p = POLICY[type] || POLICY["墨字"];
-  pre.style.whiteSpace   = p.whiteSpace;
-  pre.style.fontFamily   = p.font;
-  pre.style.lineHeight   = String(p.lineHeight);
-  pre.style.letterSpacing= p.letterSpacing;
-  pre.style.wordSpacing  = p.wordSpacing;
+  pre.style.whiteSpace     = p.whiteSpace;         // ← 折り返し有効
+  pre.style.fontFamily     = p.font;
+  pre.style.lineHeight     = String(p.lineHeight);
+  pre.style.letterSpacing  = p.letterSpacing;
+  pre.style.wordSpacing    = p.wordSpacing;
 
-  // 点字/墨字はみ出し時の横スクロール（改行厳守）
-  pre.style.overflowX = (type === '備考') ? 'visible' : 'auto';
+  // 連続文字も折り返す（本家 index.html と同等の挙動）
+  pre.style.wordBreak      = 'normal';
+  pre.style.overflowWrap   = 'anywhere';
+  pre.style.lineBreak      = 'anywhere';
+
+  // はみ出しスクロールは無効化（折り返しで見せるため）
+  pre.style.overflowX      = 'visible';
 
   // 幅ブレ抑制
-  pre.style.fontKerning  = 'none';
+  pre.style.fontKerning    = 'none';
   pre.style.fontVariantEastAsian = 'normal';
 
-  // スライダ設定（タイプ別レンジ）
+  // スライダ設定（小数対応）
   size.min = String(p.min);
   size.max = String(p.max);
   size.value = String(p.initial);
+  size.step = String(p.step ?? 1);   // ← 0.5 を有効に
   applySize();
   size.addEventListener('input', applySize);
 
@@ -122,8 +132,10 @@ async function load() {
     sizeLabel.textContent = size.value + 'px';
   }
 }
+
 load();
 </script>
+
 
 </body>
 </html>
