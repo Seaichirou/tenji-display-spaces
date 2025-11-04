@@ -23,8 +23,8 @@
       <div class="row head">
         <div class="cell">作品名</div>
         <div class="cell">墨字</div>
-        <div class="cell">6点式点字</div>
-        <div class="cell">8点式点字</div>
+        <div class="cell">6点式</div>
+        <div class="cell">8点式</div>
         <div class="cell">備考</div>
       </div>
       <!-- rows are injected by JS -->
@@ -35,7 +35,7 @@
 <footer class="footer">© tenji-display-spaces / CC BY-NC 4.0</footer>
 
 <script>
-const COLUMNS = ["墨字","6点式点字","8点式点字","備考"]; // 表示順を固定
+const COLUMNS = ["墨字","6点式","8点式","備考"]; // 表示順を固定
 (async () => {
   const res = await fetch('manifest.json');
   const data = await res.json();
