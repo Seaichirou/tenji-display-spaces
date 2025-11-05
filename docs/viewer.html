@@ -99,10 +99,11 @@ async function load() {
 
   // 備考.md の場合はマークダウンをHTMLに変換
   if (type === "備考") {
-    pre.innerHTML = marked.parse(txt);  // markedを使ってマークダウンをHTMLに変換
+    pre.outerHTML = `<div id="content" class="md">${marked.parse(txt)}</div>`;
   } else {
     pre.textContent = txt;
   }
+
 
   const p = POLICY[type] || POLICY["墨字"];
   pre.style.whiteSpace = p.whiteSpace;         // ← 折り返し有効

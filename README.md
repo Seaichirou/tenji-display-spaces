@@ -9,7 +9,7 @@
 「仮名漢字」および「仮名漢字による点字」については以下のサイトで説明しています。
 
 - [仮名漢字マシン](https://kanakanji-machine-3cd804a8be3e.herokuapp.com/)
-- [仮名漢字による点字変換サイト](https://tenji-convert-machine-8fbe49b32604.herokuapp.com/)
+- [点字&仮名漢字コンバートマシン](https://tenji-convert-machine-8fbe49b32604.herokuapp.com/)
 
 ---
 

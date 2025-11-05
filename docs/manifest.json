@@ -13,7 +13,7 @@
     },
     {
       "id": "02_test",
-      "label": "testtestesttesttesttesttestestestest（testtest）",
+      "label": "testtestesttesttesttesttestestestestテストテストテストテストテストテストテストテスト（testtest）",
       "base": "./展示/test/",
       "files": {
         "墨字": "test_墨字.txt",
