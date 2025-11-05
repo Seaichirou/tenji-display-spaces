@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="viewer">
-      <pre id="content">読み込み中…</pre>
+      <div id="content">読み込み中…</div>
     </div>
   </div>
 </main>
@@ -41,6 +41,8 @@
 const qs = new URLSearchParams(location.search);
 const id   = qs.get('id');
 const type = qs.get('type'); // "墨字" / "6点式" / "8点式" / "備考"
+const content = document.getElementById('content');
+const size  = document.getElementById('size');
 
 /* 本家アプリと同じ方針：
    - 墨字/点字：pre-wrap（改行は尊重しつつ折り返す）
@@ -99,43 +101,41 @@ async function load() {
 
   // 備考.md の場合はマークダウンをHTMLに変換
   if (type === "備考") {
-    pre.outerHTML = `<div id="content" class="md">${marked.parse(txt)}</div>`;
+    // Markdown を HTML に
+    content.classList.add('md');
+    content.innerHTML = marked.parse(txt);
   } else {
-    pre.textContent = txt;
+    // テキストそのまま
+    content.classList.remove('md');
+    content.textContent = txt;
   }
 
-
+  // スタイル適用対象も content に統一
   const p = POLICY[type] || POLICY["墨字"];
-  pre.style.whiteSpace = p.whiteSpace;         // ← 折り返し有効
-  pre.style.fontFamily = p.font;
-  pre.style.lineHeight = String(p.lineHeight);
-  pre.style.letterSpacing = p.letterSpacing;
-  pre.style.wordSpacing = p.wordSpacing;
+  content.style.whiteSpace = p.whiteSpace;
+  content.style.fontFamily = p.font;
+  content.style.lineHeight = String(p.lineHeight);
+  content.style.letterSpacing = p.letterSpacing;
+  content.style.wordSpacing = p.wordSpacing;
+  content.style.wordBreak = 'normal';
+  content.style.overflowWrap = 'anywhere';
+  content.style.lineBreak = 'anywhere';
+  content.style.overflowX = 'visible';
+  content.style.fontKerning = 'none';
+  content.style.fontVariantEastAsian = 'normal';
 
-  // 連続文字も折り返す（本家 index.html と同等の挙動）
-  pre.style.wordBreak = 'normal';
-  pre.style.overflowWrap = 'anywhere';
-  pre.style.lineBreak = 'anywhere';
-
-  // はみ出しスクロールは無効化（折り返しで見せるため）
-  pre.style.overflowX = 'visible';
-
-  // 幅ブレ抑制
-  pre.style.fontKerning = 'none';
-  pre.style.fontVariantEastAsian = 'normal';
-
+  // スライダー設定＆反映も content を使う
   size.min = String(p.min);
   size.max = String(p.max);
   size.value = String(p.initial);
-  size.step = String(p.step ?? 1);   // ← 0.5 を有効に
+  size.step = String(p.step ?? 1);
   applySize();
   size.addEventListener('input', applySize);
 
   function applySize() {
-    pre.style.fontSize = size.value + 'px';
+    content.style.fontSize = size.value + 'px';
   }
 }
-
 load();
 </script>
 
