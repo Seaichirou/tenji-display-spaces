@@ -8,17 +8,7 @@
       "files": {
         "墨字": "かちかち山_芥川龍之介_墨字.txt",
         "6点式": "かちかち山_芥川龍之介_6点式.txt",
-        "備考": "備考.md"
-      }
-    },
-    {
-      "id": "02_test",
-      "label": "testtestesttesttesttesttestestestestテストテストテストテストテストテストテストテスト（testtest）",
-      "base": "./展示/test/",
-      "files": {
-        "墨字": "test_墨字.txt",
-        "6点式": "test_6点式.txt",
-        "8点式": "test_8点式.txt",
+        "8点式": "かちかち山_芥川龍之介_8点式.txt",
         "備考": "備考.md"
       }
     }
