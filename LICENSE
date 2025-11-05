@@ -1,2 +1,30 @@
-This work is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License.
-To view a copy of this license, visit https://creativecommons.org/licenses/by-nc/4.0/
+This repository contains two categories of content:
+
+(1) Source Text (Original Japanese literary works)
+    The original Japanese texts used as source material are obtained from Aozora Bunko (https://www.aozora.gr.jp/).
+    Such texts are either:
+      - Public Domain, or
+      - provided under separate agreements with the respective rights holders.
+    These source texts are NOT covered by the Creative Commons license below.
+
+(2) Derived Content (e.g., kana-kanji conversion, braille transcription, notes, comments)
+    These derivative works created by this project are licensed under
+    the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+
+    To view a copy of this license, visit:
+    https://creativecommons.org/licenses/by-nc/4.0/
+
+-----------------------------------------
+日本語参考（任意）
+
+本リポジトリには以下の2種類の内容が含まれます：
+
+(1) 底本テキスト（青空文庫より取得）
+    青空文庫（https://www.aozora.gr.jp/）から取得した底本テキストは
+      - パブリックドメイン、または
+      - 各権利者の規定
+    に従います。
+    これら底本テキストは下記の CC ライセンスの対象ではありません。
+
+(2) 派生内容（仮名漢字変換、点訳、備考など）
+    本プロジェクトで生

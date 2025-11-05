@@ -15,16 +15,37 @@
 
 ## 展示の閲覧
 
-　展示作品は「展示」フォルダに収録されています。
+展示作品は `docs/展示/` フォルダに収録されています。
 
-- 展示の閲覧には **[展示ビューア](https://seaichirou.github.io/tenji-display-spaces/index.html)** をご利用ください。
+- 展示の閲覧には  
+  **[展示ビューア](https://seaichirou.github.io/tenji-display-spaces/index.html)**  
+  をご利用ください。
 
 ---
 
 ## ライセンス
 
-このリポジトリに含まれる作品およびファイルは  
-**Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**  
-のもとで公開されています。  
+このリポジトリには **以下の 2 種類の内容** が含まれます。
 
-詳細: [https://creativecommons.org/licenses/by-nc/4.0/](https://creativecommons.org/licenses/by-nc/4.0/)
+### (1) 底本テキスト（青空文庫など）
+
+- 青空文庫（https://www.aozora.gr.jp/）に収録されているテキストを底本として使用しています。
+- これらの底本テキストは、  
+  **パブリックドメイン**  
+  または  
+  **各権利者の定める条件**  
+  に従います。
+- これらの底本テキストは **下記の CC ライセンスの対象ではありません**。
+
+### (2) 派生内容（点訳・仮名漢字変換・備考など）
+
+- 本プロジェクトで作成された  
+  **仮名漢字による点字・墨字への変換結果、および備考・注記などの派生物**  
+  は
+  **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**  
+  の下で公開します。
+
+- ライセンス詳細:  
+  https://creativecommons.org/licenses/by-nc/4.0/
+
+詳しくは **LICENSE** を参照してください。
