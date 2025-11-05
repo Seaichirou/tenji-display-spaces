@@ -72,8 +72,8 @@ const POLICY = {
   }
 };
 
+// viewer.html の部分
 async function load() {
-  // manifest 読み込み（キャッシュ回避）
   const res = await fetch('manifest.json?v=' + Date.now(), { cache: 'no-cache' });
   const data = await res.json();
 
@@ -88,35 +88,32 @@ async function load() {
   if (!file) { pre.textContent = `${type} は用意されていません。`; return; }
 
   const path = ex.base + file;
-  title.textContent = `${ex.label} – ${type}`;
+  title.textContent = `${ex.label} – ${type}`;  // ここで "6点式" と表示
   meta.textContent  = path.replace('./','/');
 
-  // 本文（日本語パス + キャッシュ回避）
   const url = encodeURI(path) + '?v=' + Date.now();
   const txt = await fetch(url, { cache: 'no-cache' }).then(r => r.text());
   pre.textContent = txt;
 
-  // タイプ別適用
   const p = POLICY[type] || POLICY["墨字"];
-  pre.style.whiteSpace     = p.whiteSpace;         // ← 折り返し有効
-  pre.style.fontFamily     = p.font;
-  pre.style.lineHeight     = String(p.lineHeight);
-  pre.style.letterSpacing  = p.letterSpacing;
-  pre.style.wordSpacing    = p.wordSpacing;
+  pre.style.whiteSpace = p.whiteSpace;         // ← 折り返し有効
+  pre.style.fontFamily = p.font;
+  pre.style.lineHeight = String(p.lineHeight);
+  pre.style.letterSpacing = p.letterSpacing;
+  pre.style.wordSpacing = p.wordSpacing;
 
   // 連続文字も折り返す（本家 index.html と同等の挙動）
-  pre.style.wordBreak      = 'normal';
-  pre.style.overflowWrap   = 'anywhere';
-  pre.style.lineBreak      = 'anywhere';
+  pre.style.wordBreak = 'normal';
+  pre.style.overflowWrap = 'anywhere';
+  pre.style.lineBreak = 'anywhere';
 
   // はみ出しスクロールは無効化（折り返しで見せるため）
-  pre.style.overflowX      = 'visible';
+  pre.style.overflowX = 'visible';
 
   // 幅ブレ抑制
-  pre.style.fontKerning    = 'none';
+  pre.style.fontKerning = 'none';
   pre.style.fontVariantEastAsian = 'normal';
 
-  // スライダ設定（小数対応）
   size.min = String(p.min);
   size.max = String(p.max);
   size.value = String(p.initial);
@@ -128,6 +125,7 @@ async function load() {
     pre.style.fontSize = size.value + 'px';
   }
 }
+
 
 load();
 </script>
