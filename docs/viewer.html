@@ -34,6 +34,9 @@
 </main>
 
 <footer class="footer">© tenji-display-spaces / CC BY-NC 4.0</footer>
+<!-- marked.jsをCDNで読み込む -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 <script>
 const qs = new URLSearchParams(location.search);
 const id   = qs.get('id');
@@ -93,7 +96,13 @@ async function load() {
 
   const url = encodeURI(path) + '?v=' + Date.now();
   const txt = await fetch(url, { cache: 'no-cache' }).then(r => r.text());
-  pre.textContent = txt;
+
+  // 備考.md の場合はマークダウンをHTMLに変換
+  if (type === "備考") {
+    pre.innerHTML = marked.parse(txt);  // markedを使ってマークダウンをHTMLに変換
+  } else {
+    pre.textContent = txt;
+  }
 
   const p = POLICY[type] || POLICY["墨字"];
   pre.style.whiteSpace = p.whiteSpace;         // ← 折り返し有効
@@ -126,9 +135,9 @@ async function load() {
   }
 }
 
-
 load();
 </script>
+
 
 
 </body>
