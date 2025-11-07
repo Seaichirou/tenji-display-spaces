@@ -1,24 +1,41 @@
 <!doctype html>
 <html lang="ja">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>点訳展示スペース</title>
-<link rel="stylesheet" href="style.css">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>点訳展示スペース</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- 安全対策メタ -->
+  <meta name="referrer" content="no-referrer" />
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data:;
+    connect-src 'self';
+    object-src 'none';
+    base-uri 'none';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+  ">
+</head>
 <body>
 
 <header>
-  
   <div class="header-inner">
     <h1 style="font-size:22px;">点訳展示スペース-展示ビューア</h1>
     <div class="controls" style="display:flex; gap:8px; flex-wrap:wrap; margin-left:auto;">
-      <a class="btn warm" href="https://tenji-convert-machine-8fbe49b32604.herokuapp.com/" target="_blank" rel="noopener">点字変換サイトを開く</a>
-      <a class="btn" href="https://github.com/Seaichirou/tenji-display-spaces/blob/main/README.md" target="_blank" rel="noopener">README を見る</a>
-      <a class="btn" href="https://github.com/Seaichirou/tenji-display-spaces" target="_blank" rel="noopener">GitHub リポジトリ</a>
+      <a class="btn warm" href="https://tenji-convert-machine-8fbe49b32604.herokuapp.com/" target="_blank" rel="noopener noreferrer">点字変換サイトを開く</a>
+      <a class="btn" href="https://github.com/Seaichirou/tenji-display-spaces/blob/main/README.md" target="_blank" rel="noopener noreferrer">README を見る</a>
+      <a class="btn" href="https://github.com/Seaichirou/tenji-display-spaces" target="_blank" rel="noopener noreferrer">GitHub リポジトリ</a>
     </div>
   </div>
 </header>
+
 <main>
   <div>仮名漢字による6点式点字、8点式点字の点訳を閲覧できます。</div>
+
   <div class="section card">
     <div class="table" id="table">
       <div class="row head">
@@ -35,39 +52,7 @@
 
 <footer class="footer">© tenji-display-spaces / CC BY-NC 4.0</footer>
 
-<script>
-const COLUMNS = ["墨字","6点式","8点式","備考"]; // 表示順を固定
-(async () => {
-  const res = await fetch('manifest.json');
-  const data = await res.json();
-  const table = document.getElementById('table');
-
-  data.exhibits.forEach(ex => {
-    const row = document.createElement('div');
-    row.className = 'row';
-
-    // 作品名（viewer ではなく index から直接 viewer に飛ぶのではなく、各セルで個別に）
-    const labelCell = document.createElement('div');
-    labelCell.className = 'cell label';
-    labelCell.innerHTML = `<strong>${ex.label}</strong>`;
-    row.appendChild(labelCell);
-
-    // 4セル（墨字 / 6点 / 8点 / 備考）
-    COLUMNS.forEach(col => {
-      const cell = document.createElement('div'); cell.className = 'cell';
-      const has = ex.files && Object.prototype.hasOwnProperty.call(ex.files, col);
-      if (has) {
-        const url = `viewer.html?id=${encodeURIComponent(ex.id)}&type=${encodeURIComponent(col)}`;
-        cell.innerHTML = `<a class="chip" href="${url}">${col}</a>`;
-      } else {
-        cell.innerHTML = `<span class="chip disabled">—</span>`;
-      }
-      row.appendChild(cell);
-    });
-
-    table.appendChild(row);
-  });
-})();
-</script>
+<!-- インラインJSは使わず外部ファイル化 -->
+<script src="index.js" defer></script>
 </body>
 </html>
