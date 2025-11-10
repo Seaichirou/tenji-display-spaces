@@ -1,12 +1,15 @@
+// index.js（完全置き換え）
 const COLUMNS = ["墨字","6点式","8点式","備考"];
 
-let ORIGINAL = [];   // manifest.json 読み込み結果（順序保持）
-let sortMode = 'new'; // 'new' | 'old' | 'author'
+let ORIGINAL = [];          // manifest.json の順序を保持
+let sortMode = 'new';       // 'new' | 'old' | 'author'
 
+// テキストを安全に入れる
 function safeText(el, text) {
   el.textContent = (text ?? '');
 }
 
+// リンク型チップ
 function buildLinkChip(label, href) {
   const a = document.createElement('a');
   a.className = 'chip';
@@ -15,48 +18,13 @@ function buildLinkChip(label, href) {
   return a;
 }
 
+// 無効チップ
 function buildDisabledChip() {
   const span = document.createElement('span');
   span.className = 'chip disabled';
   safeText(span, '—');
   return span;
 }
-
-// 旧ラベルの括弧から author を暫定抽出（例: "かちかち山（芥川龍之介）"）
-function extractAuthorFromLabel(label) {
-  const m = typeof label === 'string' ? label.match(/（(.+?)）\s*$/) : null;
-  return m ? m[1] : '';
-}
-
-// 描画本体
-function render() {
-  const table = document.getElementById('table');
-  Array.from(table.querySelectorAll('.row:not(.head)')).forEach(n => n.remove());
-
-  let list = ORIGINAL.map((ex, idx) => ({ ...ex, __idx: idx }));
-
-  if (sortMode === 'new') {
-    list.sort((a, b) => a.__idx - b.__idx);   // 新しい順（先頭が新）
-  } else if (sortMode === 'old') {
-    list.sort((a, b) => b.__idx - a.__idx);   // 古い順
-  } else if (sortMode === 'author') {
-    // 著者名で単純ソート
-    list.sort((a, b) => {
-      const aa = (ex.author ?? "").toString();
-      const bb = (ex.author ?? "").toString();
-      const byAuthor = aa.localeCompare(bb, "ja", { sensitivity: "base", numeric: true });
-      if (byAuthor !== 0) return byAuthor;
-
-      // 同一著者内は元の順序
-      return a.__idx - b.__idx;
-    });
-  }
-
-  for (const ex of list) {
-    table.appendChild(buildRow(ex));
-  }
-}
-
 
 // 1行を作る
 function buildRow(ex) {
@@ -67,14 +35,14 @@ function buildRow(ex) {
   const labelCell = document.createElement('div');
   labelCell.className = 'cell label';
   const strong = document.createElement('strong');
-  strong.textContent = ex.label ?? "";
+  safeText(strong, ex.label);
   labelCell.appendChild(strong);
   row.appendChild(labelCell);
 
   // 作者
   const authorCell = document.createElement('div');
   authorCell.className = 'cell';
-  authorCell.textContent = ex.author ?? "";
+  safeText(authorCell, (ex.author ?? '').toString());
   row.appendChild(authorCell);
 
   // 4セル（墨字 / 6点 / 8点 / 備考）
@@ -95,7 +63,38 @@ function buildRow(ex) {
   return row;
 }
 
-// ソート UI のイベント
+// 描画
+function render() {
+  const table = document.getElementById('table');
+  Array.from(table.querySelectorAll('.row:not(.head)')).forEach(n => n.remove());
+
+  // 現在の順序リスト
+  let list = ORIGINAL.map((ex, idx) => ({ ...ex, __idx: idx }));
+
+  if (sortMode === 'new') {
+    // 末尾ほど新しい前提 → 新しい順（大きい idx が先）
+    list.sort((a, b) => b.__idx - a.__idx);
+  } else if (sortMode === 'old') {
+    // 古い順（小さい idx が先）
+    list.sort((a, b) => a.__idx - b.__idx);
+  } else if (sortMode === 'author') {
+    // 著者名で単純ソート（見出しなし）
+    list.sort((a, b) => {
+      const aa = (a.author ?? '').toString().trim();
+      const bb = (b.author ?? '').toString().trim();
+      const byAuthor = aa.localeCompare(bb, 'ja', { sensitivity: 'base', numeric: true });
+      if (byAuthor !== 0) return byAuthor;
+      // 同一著者内では新しい順の感覚（大きい idx が先）
+      return b.__idx - a.__idx;
+    });
+  }
+
+  for (const ex of list) {
+    table.appendChild(buildRow(ex));
+  }
+}
+
+// ソート UI
 function setupSortUI() {
   const bar = document.querySelector('.sortbar');
   if (!bar) return;
@@ -115,11 +114,10 @@ function setupSortUI() {
     const res = await fetch('manifest.json', { cache: 'no-cache' });
     const data = await res.json();
 
-    // exhibits をそのまま保持（配列順が新旧基準）
     ORIGINAL = (data.exhibits || []).map(ex => ({
       id: ex.id,
       label: ex.label,
-      author: ex.author,  // 新フィールド（無い場合は未設定のまま）
+      author: ex.author,  // manifest.json で管理
       base: ex.base,
       files: ex.files
     }));
