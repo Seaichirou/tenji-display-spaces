@@ -31,57 +31,32 @@ function extractAuthorFromLabel(label) {
 // 描画本体
 function render() {
   const table = document.getElementById('table');
-
-  // 既存行を削除（ヘッダ以外）
   Array.from(table.querySelectorAll('.row:not(.head)')).forEach(n => n.remove());
 
-  // 並べ替え用の配列を作成
-  let list = ORIGINAL.map((ex, idx) => ({
-    ...ex,
-    __idx: idx, // 元の順序を保持（新旧の基準に使う）
-  }));
+  let list = ORIGINAL.map((ex, idx) => ({ ...ex, __idx: idx }));
 
   if (sortMode === 'new') {
-    // manifest 先頭ほど新しい想定
-    list.sort((a, b) => a.__idx - b.__idx);
+    list.sort((a, b) => a.__idx - b.__idx);   // 新しい順（先頭が新）
   } else if (sortMode === 'old') {
-    list.sort((a, b) => b.__idx - a.__idx);
+    list.sort((a, b) => b.__idx - a.__idx);   // 古い順
+  } else if (sortMode === 'author') {
+    // 著者名で単純ソート
+    list.sort((a, b) => {
+      const aa = (ex.author ?? "").toString();
+      const bb = (ex.author ?? "").toString();
+      const byAuthor = aa.localeCompare(bb, "ja", { sensitivity: "base", numeric: true });
+      if (byAuthor !== 0) return byAuthor;
+
+      // 同一著者内は元の順序
+      return a.__idx - b.__idx;
+    });
   }
 
-  if (sortMode !== 'author') {
-    // 通常のフラット描画
-    for (const ex of list) {
-      table.appendChild(buildRow(ex));
-    }
-  } else {
-    // 著者でまとめる：author -> exhibits[]
-    const byAuthor = new Map();
-    for (const ex of list) {
-      const author = (ex.author && String(ex.author)) || extractAuthorFromLabel(ex.label) || '（作者未設定）';
-      if (!byAuthor.has(author)) byAuthor.set(author, []);
-      byAuthor.get(author).push(ex);
-    }
-
-    // 作者名で昇順
-    const authors = Array.from(byAuthor.keys()).sort((a, b) => a.localeCompare(b, 'ja'));
-
-    for (const author of authors) {
-      // グループ見出しを挿入
-      const group = document.createElement('div');
-      group.className = 'row group-head';
-      const headCell = document.createElement('div');
-      headCell.className = 'cell';
-      safeText(headCell, `著者: ${author}`);
-      group.appendChild(headCell);
-      table.appendChild(group);
-
-      // その作者の作品を元順序のまま（新しい順の感覚）
-      for (const ex of byAuthor.get(author)) {
-        table.appendChild(buildRow(ex));
-      }
-    }
+  for (const ex of list) {
+    table.appendChild(buildRow(ex));
   }
 }
+
 
 // 1行を作る
 function buildRow(ex) {
@@ -92,15 +67,14 @@ function buildRow(ex) {
   const labelCell = document.createElement('div');
   labelCell.className = 'cell label';
   const strong = document.createElement('strong');
-  safeText(strong, ex.label);
+  strong.textContent = ex.label ?? "";
   labelCell.appendChild(strong);
   row.appendChild(labelCell);
 
   // 作者
   const authorCell = document.createElement('div');
   authorCell.className = 'cell';
-  const author = (ex.author && String(ex.author)) || extractAuthorFromLabel(ex.label) || '';
-  safeText(authorCell, author);
+  authorCell.textContent = ex.author ?? "";
   row.appendChild(authorCell);
 
   // 4セル（墨字 / 6点 / 8点 / 備考）
