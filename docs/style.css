@@ -41,23 +41,48 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 16px; }
 
 h2 { margin: 0 0 8px 0; font-size: 18px; }
 
-/* Exhibit grid: 作品名 | 墨字 | 6点 | 8点 | 備考 */
+/* 行の余白を少し詰める */
+.row { gap: 6px; padding: 10px; }
+
+/* 追加: 並べ替えバー */
+.sortbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.sortbar-label { color: var(--muted); }
+.linklike {
+  background: none; border: none; padding: 0; margin: 0;
+  color: var(--accent); cursor: pointer; font: inherit; text-decoration: underline;
+}
+.linklike:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sep { color: var(--muted); }
+
+/* Exhibit grid: 作品名 | 作者 | 墨字 | 6点 | 8点 | 備考 */
 .table { overflow:auto; border:1px solid var(--border); border-radius:12px; background: var(--panel); }
 .row { display:grid; gap:8px; padding:10px; align-items:center; border-bottom:1px solid var(--border); }
 .row.head { background: var(--hl); font-weight:600; }
 .row:last-child { border-bottom: none; }
 
-/* 行の余白を少し詰める */
-.row { gap: 6px; padding: 10px; }
-
-/* デスクトップ時は「タイトル=可変」「右4列=実寸」に */
+/* デスクトップ時は「タイトル=可変」「作者=やや広め」「右4列=実寸」 */
 @media (min-width: 768px) {
   .row { 
-    grid-template-columns: 1fr repeat(4, max-content);
+    grid-template-columns: 1fr 180px repeat(4, max-content);
   }
-  /* 右側のセルは中央寄せでコンパクトに */
   .row .cell:not(.label) { justify-self: center; }
 }
+
+/* グループ見出し（著者まとめ表示用） */
+.group-head {
+  background: var(--hl);
+  font-weight: 700;
+  color: var(--ink);
+}
+.group-head .cell {
+  grid-column: 1 / -1; /* 全列を横断 */
+  padding: 8px 2px;
+  font-size: 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+
 
 /* チップを少し小さくして詰める */
 .chip { 

@@ -36,10 +36,23 @@
 <main>
   <div>仮名漢字による6点式点字、8点式点字の点訳を閲覧できます。</div>
 
+  <!-- ▼ ソート UI -->
+  <div class="section card">
+    <div class="sortbar" role="group" aria-label="並べ替え">
+      <span class="sortbar-label">ソート:</span>
+      <button class="linklike" data-sort="new">新しい投稿</button>
+      <span class="sep">/</span>
+      <button class="linklike" data-sort="old">古い投稿</button>
+      <span class="sep">/</span>
+      <button class="linklike" data-sort="author">著者でまとめる</button>
+    </div>
+  </div>
+
   <div class="section card">
     <div class="table" id="table">
       <div class="row head">
         <div class="cell">作品名</div>
+        <div class="cell">作者</div>
         <div class="cell">墨字</div>
         <div class="cell">6点式</div>
         <div class="cell">8点式</div>
