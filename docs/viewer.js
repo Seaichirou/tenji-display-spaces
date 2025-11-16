@@ -6,11 +6,37 @@ const content = document.getElementById('content');
 const size    = document.getElementById('size');
 
 const POLICY = {
-  "墨字":  { whiteSpace:"pre-wrap", font:'ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace', min:16, max:20.5, initial:20.5, step:0.5, lineHeight:2.0, letterSpacing:"0", wordSpacing:"0" },
-  "6点式": { whiteSpace:"pre-wrap", font:'"Apple Braille","Noto Sans Symbols2","Segoe UI Symbol", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace', min:20, max:30, initial:30, step:1,   lineHeight:2.0, letterSpacing:"0", wordSpacing:"0" },
-  "8点式": { whiteSpace:"pre-wrap", font:'"Apple Braille","Noto Sans Symbols2","Segoe UI Symbol", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace', min:20, max:30, initial:30, step:1,   lineHeight:2.0, letterSpacing:"0", wordSpacing:"0" },
-  "備考":  { whiteSpace:"pre-wrap", font:'',  min:16, max:20.5, initial:20.5, step:0.5, lineHeight:2.0, letterSpacing:"0", wordSpacing:"0" }
+  "墨字":  {
+    whiteSpace: "pre-wrap",
+    font: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono CJK JP", "Noto Sans Mono", monospace',
+    min: 16, max: 20.5, initial: 20.5, step: 0.5,
+    lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
+  },
+
+  // ★ 6点式：Noto Sans Symbols 2 を最優先に
+  "6点式": {
+    whiteSpace: "pre-wrap",
+    font: '"Noto Sans Symbols 2", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+    min: 20, max: 30, initial: 30, step: 1,
+    lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
+  },
+
+  // ★ 8点式：こちらも同じく
+  "8点式": {
+    whiteSpace: "pre-wrap",
+    font: '"Noto Sans Symbols 2", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+    min: 20, max: 30, initial: 30, step: 1,
+    lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
+  },
+
+  "備考":  {
+    whiteSpace: "pre-wrap",
+    font: '',
+    min: 16, max: 20.5, initial: 20.5, step: 0.5,
+    lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
+  }
 };
+
 
 async function load() {
   try {
