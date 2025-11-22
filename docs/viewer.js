@@ -17,7 +17,7 @@ const POLICY = {
   "6点式": {
     whiteSpace: "pre-wrap",
     font: '"Noto Sans Symbols 2", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-    min: 20, max: 30, initial: 30, step: 1,
+    min: 20, max: 29, initial: 29, step: 1,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
 
@@ -25,7 +25,7 @@ const POLICY = {
   "8点式": {
     whiteSpace: "pre-wrap",
     font: '"Noto Sans Symbols 2", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-    min: 20, max: 30, initial: 30, step: 1,
+    min: 20, max: 29, initial: 29, step: 1,
     lineHeight: 2.0, letterSpacing: "0", wordSpacing: "0"
   },
 
